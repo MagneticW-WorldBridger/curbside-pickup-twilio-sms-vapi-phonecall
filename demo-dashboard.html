@@ -533,6 +533,13 @@
     </div>
 
     <script>
+        // Detectar URL del servidor automáticamente
+        const API_BASE_URL = window.location.origin; // Usa el mismo domain donde está el dashboard
+        const WS_BASE_URL = API_BASE_URL.replace('https://', 'wss://').replace('http://', 'ws://');
+        
+        console.log('🚀 API Base URL:', API_BASE_URL);
+        console.log('🔌 WebSocket URL:', WS_BASE_URL);
+        
         let notifications = [];
         let customers = [];
         
@@ -557,7 +564,7 @@
         // Load customers from API
         async function loadCustomers() {
             try {
-                const response = await fetch('http://localhost:3001/api/customers');
+                const response = await fetch(`${API_BASE_URL}/api/customers`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -614,7 +621,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:3001/api/reset-optin/${encodeURIComponent(phone)}`, {
+                const response = await fetch(`${API_BASE_URL}/api/reset-optin/${encodeURIComponent(phone)}`, {
                     method: 'POST'
                 });
                 
@@ -703,7 +710,7 @@
             }
             
             try {
-                const response = await fetch('http://localhost:3001/api/send-sms', {
+                const response = await fetch(`${API_BASE_URL}/api/send-sms`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -853,7 +860,7 @@
             const orderNumber = Math.floor(Math.random() * 90000) + 10000;
             
             try {
-                const response = await fetch('http://localhost:3001/rural-king/new-order', {
+                const response = await fetch(`${API_BASE_URL}/rural-king/new-order`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -903,7 +910,7 @@
             }
             
             try {
-                const response = await fetch('http://localhost:3001/rural-king/ready-for-pickup', {
+                const response = await fetch(`${API_BASE_URL}/rural-king/ready-for-pickup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -938,7 +945,7 @@
         
         // Connect to WebSocket for real-time notifications
         function connectWebSocket() {
-            const ws = new WebSocket('ws://localhost:3001/demo-notifications');
+            const ws = new WebSocket(`${WS_BASE_URL}/demo-notifications`);
             
             ws.onopen = () => {
                 console.log('Connected to notification stream');
