@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+vapi-scraper-env/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+vapi_scraper.log
+webhook.log
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project specific
+configs/
+typescript-vapi-training/
+scraped-docs/
+chat-voice-platform/node_modules/
+aiprl-furniture-followup/node_modules/
+
+# Test files (keep if you want them)
+# test-*.js
+# *.test.js
+
+# Keep these for deployment
+!package.json
+!package-lock.json
+!smart-webhook-server.js
+!demo-dashboard.html
+!database-schema.sql
+!railway.json
+!Procfile
+

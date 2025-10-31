@@ -1,0 +1,25 @@
+{
+  "name": "rural-king-sms-ai",
+  "version": "2.0.0",
+  "description": "Rural King Smart SMS & VAPI Integration System",
+  "main": "smart-webhook-server.js",
+  "scripts": {
+    "start": "node smart-webhook-server.js",
+    "dev": "nodemon smart-webhook-server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "openai": "^5.23.0",
+    "pg": "^8.16.3",
+    "twilio": "^4.19.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

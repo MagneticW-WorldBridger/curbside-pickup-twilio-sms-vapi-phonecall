@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural King - IBM Sterling Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-weight: 400;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4caf50;
+            font-size: 14px;
+        }
+
+        .status .dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .controls h2 {
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #1565c0;
+            box-shadow: 0 2px 8px rgba(25,118,210,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn.secondary {
+            background: #4caf50;
+        }
+
+        .btn.secondary:hover {
+            background: #43a047;
+            box-shadow: 0 2px 8px rgba(76,175,80,0.3);
+        }
+
+        .notifications {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .notifications-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notifications-header h2 {
+            font-weight: 400;
+            color: #666;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #757575;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .notifications-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification:last-child {
+            border-bottom: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification-icon {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: #999;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        .empty-state .material-icons {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .order-type {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-type.new {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .order-type.ready {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .order-type.arrival {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-type.complaint {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .order-type.completed {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .order-type.call {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .order-type.general {
+            background: #f5f5f5;
+            color: #424242;
+        }
+
+        .order-type.opt_in_confirmed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .order-type.custom_sms_sent {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-type.opt_in_reset {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        /* SMS Panel Styles */
+        .sms-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sms-panel h2 {
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* Customer List Styles */
+        .customers-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .customers-panel h2 {
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .customer-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .customer-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .customer-item:hover {
+            background: #f5f5f5;
+        }
+
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+
+        .customer-info {
+            flex: 1;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .customer-phone {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .customer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-badge.opted-in {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.not-opted {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-reset {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #f57c00;
+            transform: scale(1.05);
+        }
+
+        .btn-reset:active {
+            transform: scale(0.95);
+        }
+
+        .customer-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span class="material-icons">store</span>
+                Rural King - Demo Dashboard
+            </h1>
+            <div class="status">
+                <div class="dot"></div>
+                Connected
+            </div>
+        </div>
+
+        <div class="controls">
+            <h2>🎮 Quick Demo Controls</h2>
+            <p style="color: #999; font-size: 12px; margin-bottom: 10px;">
+                Select a customer below or these will use the phone number from the SMS panel
+            </p>
+            <div class="button-group">
+                <button class="btn" onclick="createNewOrderFromDashboard()">
+                    <span class="material-icons">add_shopping_cart</span>
+                    New Order
+                </button>
+                <button class="btn secondary" onclick="markOrderReadyFromDashboard()">
+                    <span class="material-icons">check_circle</span>
+                    Ready for Pickup
+                </button>
+            </div>
+        </div>
+
+        <div class="sms-panel">
+            <h2>📤 Send Custom SMS</h2>
+            <div class="form-group">
+                <label>Customer</label>
+                <select id="customerSelect" onchange="updatePhoneFromSelect()">
+                    <option value="">Select a customer or enter manually below</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phoneInput" placeholder="+1234567890" />
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="messageInput" placeholder="Type your message here..." oninput="updateCharCount()"></textarea>
+                <div class="char-counter" id="charCounter">0 / 160 characters</div>
+            </div>
+            <button class="btn" onclick="sendCustomSMS()">
+                <span class="material-icons">send</span>
+                Send SMS
+            </button>
+        </div>
+
+        <div class="customers-panel">
+            <h2>👥 Customers</h2>
+            <div class="customer-list" id="customersList">
+                <div class="empty-state">
+                    <div class="material-icons">people_outline</div>
+                    <div>Loading customers...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notifications">
+            <div class="notifications-header">
+                <h2>IBM Sterling Notifications</h2>
+                <button class="clear-btn" onclick="clearNotifications()">
+                    <span class="material-icons">clear_all</span>
+                </button>
+            </div>
+            <div class="notifications-list" id="notificationsList">
+                <div class="empty-state">
+                    <div class="material-icons">notifications_none</div>
+                    <div>Waiting for notifications...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let notifications = [];
+        let customers = [];
+        
+        function addNotification(type, title, message) {
+            const notification = {
+                id: Date.now(),
+                type: type,
+                title: title,
+                message: message,
+                timestamp: new Date()
+            };
+            
+            notifications.unshift(notification);
+            renderNotifications();
+            
+            // Auto-clear after 50 notifications to prevent memory bloat
+            if (notifications.length > 50) {
+                notifications = notifications.slice(0, 50);
+            }
+        }
+
+        // Load customers from API
+        async function loadCustomers() {
+            try {
+                const response = await fetch('http://localhost:3001/api/customers');
+                const data = await response.json();
+                
+                if (data.success) {
+                    customers = data.customers;
+                    renderCustomers();
+                    updateCustomerSelect();
+                }
+            } catch (error) {
+                console.error('Error loading customers:', error);
+            }
+        }
+
+        // Render customers list
+        function renderCustomers() {
+            const list = document.getElementById('customersList');
+            
+            if (customers.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">people_outline</div>
+                        <div>No customers yet</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = customers.map(customer => `
+                <div class="customer-item">
+                    <div class="customer-info" onclick="selectCustomer('${customer.phone}', '${customer.name}')" style="cursor: pointer; flex: 1;">
+                        <div class="customer-name">${customer.name}</div>
+                        <div class="customer-phone">${customer.phone}</div>
+                    </div>
+                    <div class="customer-actions">
+                        <div class="customer-status">
+                            <span class="status-badge ${customer.opted_in ? 'opted-in' : 'not-opted'}">
+                                ${customer.opted_in ? '✓ OPTED IN' : '✗ NOT OPTED'}
+                            </span>
+                            ${customer.total_orders ? `<span style="color: #999;">${customer.total_orders} order${customer.total_orders > 1 ? 's' : ''}</span>` : ''}
+                        </div>
+                        ${customer.opted_in ? `
+                            <button class="btn-reset" onclick="event.stopPropagation(); resetOptIn('${customer.phone}', '${customer.name}')">
+                                🔄 Reset Opt-In
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Reset opt-in status for demo
+        async function resetOptIn(phone, name) {
+            if (!confirm(`Reset opt-in status for ${name} (${phone})?\n\nThis will allow them to opt-in again for demo purposes.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/reset-optin/${encodeURIComponent(phone)}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Reload customers
+                    loadCustomers();
+                    
+                    // Show success notification
+                    addNotification(
+                        'opt_in_reset',
+                        'Opt-In Reset',
+                        `${name} can now opt-in again for demo purposes`
+                    );
+                } else {
+                    alert('Failed to reset opt-in: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error resetting opt-in:', error);
+                alert('Error resetting opt-in');
+            }
+        }
+
+        // Update customer dropdown
+        function updateCustomerSelect() {
+            const select = document.getElementById('customerSelect');
+            select.innerHTML = '<option value="">Select a customer or enter manually below</option>' +
+                customers.map(customer => `
+                    <option value="${customer.phone}" data-name="${customer.name}">
+                        ${customer.name} - ${customer.phone} ${customer.opted_in ? '✓' : '✗'}
+                    </option>
+                `).join('');
+        }
+
+        // Select customer from list
+        function selectCustomer(phone, name) {
+            document.getElementById('phoneInput').value = phone;
+            document.getElementById('customerSelect').value = phone;
+            
+            // Focus on message input
+            document.getElementById('messageInput').focus();
+            
+            console.log(`Selected customer: ${name} (${phone})`);
+        }
+
+        // Update phone from dropdown
+        function updatePhoneFromSelect() {
+            const select = document.getElementById('customerSelect');
+            const phone = select.value;
+            if (phone) {
+                document.getElementById('phoneInput').value = phone;
+            }
+        }
+
+        // Update character counter
+        function updateCharCount() {
+            const message = document.getElementById('messageInput').value;
+            const counter = document.getElementById('charCounter');
+            const length = message.length;
+            
+            counter.textContent = `${length} / 160 characters`;
+            
+            if (length > 160) {
+                counter.style.color = '#c62828';
+            } else if (length > 140) {
+                counter.style.color = '#f57c00';
+            } else {
+                counter.style.color = '#999';
+            }
+        }
+
+        // Send custom SMS
+        async function sendCustomSMS() {
+            const phone = document.getElementById('phoneInput').value.trim();
+            const message = document.getElementById('messageInput').value.trim();
+            
+            if (!phone) {
+                alert('Please enter a phone number');
+                return;
+            }
+            
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/send-sms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        to: phone,
+                        message: message,
+                        from_name: 'Demo Dashboard'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Clear form
+                    document.getElementById('messageInput').value = '';
+                    updateCharCount();
+                    
+                    // Show success notification
+                    addNotification(
+                        'custom_sms_sent',
+                        'SMS Sent Successfully',
+                        `Message sent to ${phone}`
+                    );
+                } else {
+                    alert('Failed to send SMS: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error sending SMS:', error);
+                alert('Error sending SMS');
+            }
+        }
+        
+        function renderNotifications() {
+            const list = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">notifications_none</div>
+                        <div>Waiting for notifications...</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = notifications.map(notification => `
+                <div class="notification">
+                    <div class="notification-icon">
+                        <span class="material-icons">
+                            ${getNotificationIcon(notification.type)}
+                        </span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">
+                            <span class="order-type ${getNotificationBadgeType(notification.type)}">
+                                ${getNotificationBadgeText(notification.type)}
+                            </span>
+                            ${notification.title}
+                        </div>
+                        <div class="notification-message">${notification.message}</div>
+                        <div class="notification-time">${notification.timestamp.toLocaleTimeString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function clearNotifications() {
+            notifications = [];
+            renderNotifications();
+        }
+        
+        function getNotificationIcon(type) {
+            switch(type) {
+                case 'new_order': return 'shopping_cart';
+                case 'ready_for_pickup': return 'check_circle';
+                case 'customer_arrival': return 'local_parking';
+                case 'complaint_escalation': return 'phone';
+                case 'vapi_call_initiated': return 'phone_in_talk';
+                case 'vapi_call_ended': return 'phone_missed';
+                case 'order_completed': return 'done_all';
+                case 'general_inquiry': return 'help_outline';
+                case 'opt_in_confirmed': return 'verified_user';
+                case 'custom_sms_sent': return 'send';
+                case 'opt_in_reset': return 'refresh';
+                default: return 'notifications';
+            }
+        }
+        
+        function getNotificationBadgeType(type) {
+            switch(type) {
+                case 'new_order': return 'new';
+                case 'ready_for_pickup': return 'ready';
+                case 'customer_arrival': return 'arrival';
+                case 'complaint_escalation': return 'complaint';
+                case 'vapi_call_initiated': return 'call';
+                case 'vapi_call_ended': return 'call';
+                case 'order_completed': return 'completed';
+                case 'general_inquiry': return 'general';
+                case 'opt_in_confirmed': return 'opt_in_confirmed';
+                case 'custom_sms_sent': return 'custom_sms_sent';
+                case 'opt_in_reset': return 'opt_in_reset';
+                default: return 'general';
+            }
+        }
+        
+        function getNotificationBadgeText(type) {
+            switch(type) {
+                case 'new_order': return 'NEW ORDER';
+                case 'ready_for_pickup': return 'READY';
+                case 'customer_arrival': return 'ARRIVED';
+                case 'complaint_escalation': return 'COMPLAINT';
+                case 'vapi_call_initiated': return 'CALLING';
+                case 'vapi_call_ended': return 'CALL END';
+                case 'order_completed': return 'COMPLETED';
+                case 'general_inquiry': return 'INQUIRY';
+                case 'opt_in_confirmed': return 'OPTED IN';
+                case 'custom_sms_sent': return 'SMS SENT';
+                case 'opt_in_reset': return 'RESET';
+                default: return 'SYSTEM';
+            }
+        }
+        
+        // Get customer data from dashboard inputs
+        function getSelectedCustomerData() {
+            const phone = document.getElementById('phoneInput').value.trim();
+            
+            if (!phone) {
+                alert('Please select a customer or enter a phone number in the SMS panel first');
+                return null;
+            }
+            
+            // Try to find customer in the list
+            const customer = customers.find(c => c.phone === phone);
+            
+            return {
+                phone: phone,
+                name: customer ? customer.name : 'Customer'
+            };
+        }
+        
+        // Create new order using dashboard inputs
+        async function createNewOrderFromDashboard() {
+            const customerData = getSelectedCustomerData();
+            if (!customerData) return;
+            
+            const orderNumber = Math.floor(Math.random() * 90000) + 10000;
+            
+            try {
+                const response = await fetch('http://localhost:3001/rural-king/new-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customer_phone: customerData.phone,
+                        customer_name: customerData.name,
+                        order_id: orderNumber,
+                        store_name: "Rural King Mattoon",
+                        store_address: "123 Main St, Mattoon, IL"
+                    })
+                });
+                
+                if (response.ok) {
+                    addNotification(
+                        'new_order',
+                        `Order #${orderNumber} Created`,
+                        `New order created for ${customerData.name} (${customerData.phone})`
+                    );
+                    
+                    // Store last order number for "Ready for Pickup"
+                    localStorage.setItem('lastOrderNumber', orderNumber);
+                    localStorage.setItem('lastOrderPhone', customerData.phone);
+                } else {
+                    console.error('Failed to create order:', response.statusText);
+                    alert('Failed to create order');
+                }
+            } catch (error) {
+                console.error('Error creating order:', error);
+                alert('Error creating order');
+            }
+        }
+        
+        // Mark order ready using dashboard inputs
+        async function markOrderReadyFromDashboard() {
+            const customerData = getSelectedCustomerData();
+            if (!customerData) return;
+            
+            // Try to get last order number
+            let orderNumber = localStorage.getItem('lastOrderNumber');
+            const lastPhone = localStorage.getItem('lastOrderPhone');
+            
+            // If different customer or no order, prompt for order number
+            if (!orderNumber || lastPhone !== customerData.phone) {
+                orderNumber = prompt(`Enter order number for ${customerData.name}:`, 'ORDER123');
+                if (!orderNumber) return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/rural-king/ready-for-pickup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customer_phone: customerData.phone,
+                        customer_name: customerData.name,
+                        order_id: orderNumber,
+                        store_name: "Rural King Mattoon"
+                    })
+                });
+                
+                if (response.ok) {
+                    addNotification(
+                        'ready_for_pickup',
+                        `Order #${orderNumber} Ready`,
+                        `${customerData.name} notified their order is ready for pickup`
+                    );
+                    
+                    // Clear stored order after marking ready
+                    localStorage.removeItem('lastOrderNumber');
+                    localStorage.removeItem('lastOrderPhone');
+                } else {
+                    console.error('Failed to mark order ready:', response.statusText);
+                    alert('Failed to mark order ready');
+                }
+            } catch (error) {
+                console.error('Error marking order ready:', error);
+                alert('Error marking order ready');
+            }
+        }
+        
+        // Connect to WebSocket for real-time notifications
+        function connectWebSocket() {
+            const ws = new WebSocket('ws://localhost:3001/demo-notifications');
+            
+            ws.onopen = () => {
+                console.log('Connected to notification stream');
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                addNotification(data.type, data.title, data.message);
+                
+                // Reload customers if it's an opt-in or new customer event
+                if (data.type === 'opt_in_confirmed' || data.type === 'new_order' || data.type === 'opt_in_reset') {
+                    setTimeout(loadCustomers, 500);
+                }
+            };
+            
+            ws.onclose = () => {
+                console.log('Disconnected from notification stream, reconnecting...');
+                setTimeout(connectWebSocket, 2000);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        // Initialize dashboard
+        function initDashboard() {
+            // Load customers
+            loadCustomers();
+            
+            // Start WebSocket connection
+            connectWebSocket();
+            
+            // Reload customers every 10 seconds
+            setInterval(loadCustomers, 10000);
+            
+            // Add welcome notification
+            setTimeout(() => {
+                addNotification(
+                    'general',
+                    'Dashboard Ready',
+                    'Rural King demo dashboard is active. You can now send custom SMS messages to any customer.'
+                );
+            }, 1000);
+        }
+        
+        // Start dashboard
+        initDashboard();
+    </script>
+</body>
+</html>
+
